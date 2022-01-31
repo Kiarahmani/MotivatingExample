@@ -19,6 +19,10 @@ class SampleDatabaseLibrary:
   def add_operation(op):
     # todo
     return
+  
+  def add_assertion(ass):
+    # todo
+    return
     
   def select_one(tp, id):
     # todo
@@ -37,7 +41,6 @@ class SampleDatabaseLibrary:
     return res
   
     
-company_db = SampleDatabaseLibrary(Employee, Task, "owns","one_to_many");
   
 def emp_leave_req(db, emp_id):
   e = db.select_one(Employee, emp_id)
@@ -71,6 +74,25 @@ def assert_invariant(db):
   
   
   
+  if __name__ == "__main__":
+    company_database = SampleDatabaseLibrary(Employee, Task, "owns","one_to_many");
+    company_database.add_operation(emp_leave_req)
+    company_database.add_operation(mark_task_undone)
+    company_database.add_assertion(assert_invariant)
+    
+    verifier = Verifier()
+    imps = get_candidate_implementations(company_database) # either user provides the implementation, or a synthesizer
+    
+    for imp in imps:
+      res, cex = verifier.verify(company_database, imp)
+      if res:
+        print ("Implementation " + src(imp) + " is sound w.r.t. the specification of company_database")
+      else:
+        print ("Implementation " + src(imp) + " is unsound w.r.t. the specification of company_database")
+        print ("Here is a counter example: \n" + src(cex))
+    
+    
+
   
   
   
