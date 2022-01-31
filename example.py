@@ -1,47 +1,16 @@
+# define entities that we wish to maintain instances of in a database
 class Task:
   def __init__(self, t_id):
     self.id = t_id
-    self.is_done = false
+    self.is_done = false 
     
 class Employee:
   def __init__(self, e_id):
     self.id = e_id
     self.on_leave = false 
- 
-class SampleDatabaseLibrary:
-  def __init__(src, dst, rel_name, card):
-    self.src = src
-    self.dst = dst
-    self.rel_name = rel_name
-    self.card = card
-    # todo
-    
-  def add_operation(op):
-    # todo
-    return
-  
-  def add_assertion(ass):
-    # todo
-    return
-    
-  def select_one(tp, id):
-    # todo
-    return res
-  
-  def select_all(tp):
-    #todo
-    return res
-  
-  def select_associated(rel_name, obj):
-    # todo
-    return res
-  
-  def select_associated_inv(rel_name, obj):
-    # todo
-    return res
-  
-    
-  
+
+# define operations (i.e. transactions) to be performed on a given database instance
+# The first operation marks an employee to be on leave if all of their tasks are done
 def emp_leave_req(db, emp_id):
   e = db.select_one(Employee, emp_id)
   tasks = db.select_associated("owns", e)
@@ -51,7 +20,7 @@ def emp_leave_req(db, emp_id):
   e.on_leave = true
   return Success()
   
-  
+#The second operation marks a task to be undone if the owner of that task is not on leave
 def mark_task_undone(db, task_id):
   t = db.select_one(Task, task_id)
   e = db.select_associated_inv("owns", t)
@@ -61,6 +30,8 @@ def mark_task_undone(db, task_id):
   return Success()
 
 
+# Following is an invariant which can be executed on a given database instance. 
+# It asserts if all tasks associated to all employees on leave are done
 def assert_invariant(db):
   # fetch all instances of Employee from the database
   emps = db.select_all(Employee)
