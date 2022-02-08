@@ -12,21 +12,25 @@ class Employee:
 # define operations (i.e. transactions) to be performed on a given database instance
 # The first operation marks an employee to be on leave if all of their tasks are done
 def emp_leave_req(db, emp_id):
+  db.begin()
   e = db.select_one(Employee, emp_id)
   tasks = db.select_associated("owns", e)
   for task in tasks:
     if (not task.is_done):
       return Error("Employee cannot go on leave. There are tasks to be done")
   e.on_leave = true
+  db.commit()
   return Success()
   
 #The second operation marks a task to be undone if the owner of that task is not on leave
 def mark_task_undone(db, task_id):
+  db.begin()
   t = db.select_one(Task, task_id)
   e = db.select_associated_inv("owns", t)
   if e.on_leave:
     return Error("Task cannot be marked as undone. The employee is on leave")
   t.is_done = false
+  db.commit()
   return Success()
 
 
